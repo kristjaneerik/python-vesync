@@ -6,9 +6,14 @@ requests.packages.urllib3.disable_warnings()
 
 BASE_URL = "https://smartapi.vesync.com"
 
+
 class VesyncApi:
     def __init__(self, username, password):
-        payload = json.dumps({"account":username,"devToken":"","password":hashlib.md5(password.encode('utf-8')).hexdigest()})
+        payload = json.dumps({
+            "account": username,
+            "devToken": "",
+            "password": hashlib.md5(password.encode('utf-8')).hexdigest()
+        })
         account = requests.post(BASE_URL + "/vold/user/login", verify=False, data=payload).json()
         if "error" in account:
             raise RuntimeError("Invalid username or password")
@@ -39,4 +44,5 @@ class VesyncApi:
         raise ValueError('Unknown device name')
 
     def get_headers(self):
-        return {'tk':self._account["tk"],'accountid':self._account["accountID"]}
+        return {'tk': self._account["tk"],
+                'accountid': self._account["accountID"]}
