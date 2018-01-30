@@ -20,11 +20,23 @@ class VesyncApi:
         self._devices = requests.get(BASE_URL + '/vold/user/devices', verify=False, headers=self.get_headers()).json()
         return self._devices
 
-    def turn_on(self,id):
-        requests.put(BASE_URL + '/v1/wifi-switch-1.3/' + id + '/status/on', verify=False, data={}, headers=self.get_headers())
+    def turn_on(self, device_id):
+        requests.put(BASE_URL + '/v1/wifi-switch-1.3/' + device_id + '/status/on', verify=False, data={}, headers=self.get_headers())
 
-    def turn_off(self, id):
-        requests.put(BASE_URL + '/v1/wifi-switch-1.3/' + id + '/status/off', verify=False, data={}, headers=self.get_headers())
+    def turn_off(self, device_id):
+        requests.put(BASE_URL + '/v1/wifi-switch-1.3/' + device_id + '/status/off', verify=False, data={}, headers=self.get_headers())
+
+    def turn_on_by_name(self, device_name):
+        self.turn_on(self.name2id(device_name))
+
+    def turn_off_by_name(self, device_name):
+        self.turn_off(self.name2id(device_name))
+
+    def name2id(self, device_name):
+        for device in self.get_devices():
+            if device['deviceName'] == device_name:
+                return device['cid']
+        raise ValueError('Unknown device name')
 
     def get_headers(self):
         return {'tk':self._account["tk"],'accountid':self._account["accountID"]}
